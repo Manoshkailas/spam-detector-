@@ -1,8 +1,4 @@
-"""
-Spam/Ham Message Classifier using Naive Bayes with Real Dataset
-This module implements text preprocessing and classification for spam/ham detection.
-Dataset: D:\Downloads\archive\spam.csv (5572 messages)
-"""
+
 
 import re
 import string
@@ -18,7 +14,6 @@ import pickle
 
 
 class TextPreprocessor:
-    """Handles text preprocessing for spam/ham classification."""
     
     def __init__(self):
         self.stop_words = {
@@ -29,22 +24,18 @@ class TextPreprocessor:
         }
     
     def clean_text(self, text):
-        """Convert text to lowercase and remove special characters."""
         text = text.lower()
         text = re.sub(r'http\S+|www\S+|email', '', text)
         text = re.sub(r'[^a-zA-Z0-9\s]', '', text)
         return text
     
     def tokenize(self, text):
-        """Split text into words."""
         return text.split()
     
     def remove_stopwords(self, tokens):
-        """Remove common stopwords."""
         return [token for token in tokens if token not in self.stop_words]
     
     def preprocess(self, text):
-        """Apply full preprocessing pipeline."""
         text = self.clean_text(text)
         tokens = self.tokenize(text)
         tokens = self.remove_stopwords(tokens)
@@ -52,7 +43,6 @@ class TextPreprocessor:
 
 
 class SpamClassifier:
-    """Spam/Ham classifier using Naive Bayes."""
     
     def __init__(self):
         self.preprocessor = TextPreprocessor()
@@ -61,20 +51,17 @@ class SpamClassifier:
         self.is_trained = False
     
     def prepare_data(self, messages, labels):
-        """Preprocess messages and prepare data for training."""
         processed_messages = [self.preprocessor.preprocess(msg) for msg in messages]
         X = self.vectorizer.fit_transform(processed_messages)
         y = np.array(labels)
         return X, y
     
     def train(self, X_train, y_train):
-        """Train the classifier."""
         self.classifier.fit(X_train, y_train)
         self.is_trained = True
         print("✓ Model trained successfully")
     
     def predict(self, messages):
-        """Predict spam/ham for new messages."""
         if not self.is_trained:
             raise ValueError("Model must be trained before making predictions")
         
@@ -97,7 +84,6 @@ class SpamClassifier:
         return results
     
     def evaluate(self, X_test, y_test):
-        """Evaluate model performance."""
         predictions = self.classifier.predict(X_test)
         
         accuracy = accuracy_score(y_test, predictions)
@@ -128,7 +114,6 @@ class SpamClassifier:
         print(f"✓ Model saved to {filepath}")
     
     def load_model(self, filepath):
-        """Load trained model and vectorizer."""
         with open(filepath, 'rb') as f:
             model_data = pickle.load(f)
         self.classifier = model_data['classifier']
@@ -139,7 +124,6 @@ class SpamClassifier:
 
 
 def create_sample_dataset():
-    """Load dataset from CSV file."""
     import csv
     import os
     
@@ -174,29 +158,27 @@ def create_sample_dataset():
 
 
 def main():
-    """Main function to train and evaluate the spam classifier."""
-    
     print("=" * 60)
     print("SPAM/HAM CLASSIFICATION MODEL")
     print("=" * 60)
     
-    print("\n📊 Loading dataset from CSV...")
+    print("\n Loading dataset from CSV...")
     messages, labels = create_sample_dataset()
     print(f"   Total messages: {len(messages)}")
     print(f"   Spam messages: {sum(labels)}")
     print(f"   Ham messages: {len(labels) - sum(labels)}")
     
-    print("\n🔄 Splitting data into train/test sets...")
+    print("\n Splitting data into train/test sets...")
     X_train_text, X_test_text, y_train, y_test = train_test_split(
         messages, labels, test_size=0.2, random_state=42, stratify=labels
     )
     
-    print("\n🏋️ Initializing and training classifier...")
+    print("\n Initializing and training classifier...")
     classifier = SpamClassifier()
     X_train, _ = classifier.prepare_data(X_train_text, y_train)
     classifier.train(X_train, y_train)
     
-    print("\n📈 Evaluating model performance...")
+    print("\n Evaluating model performance...")
     X_test, _ = classifier.prepare_data(X_test_text, y_test)
     metrics, predictions = classifier.evaluate(X_test, y_test)
     

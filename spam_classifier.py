@@ -128,7 +128,7 @@ def create_sample_dataset():
     import os
     
     # Path to the spam.csv dataset
-    dataset_path = r"D:\Downloads\archive\spam.csv"
+    dataset_path = r"dataset_path = "data/spam.csv""
     
     if not os.path.exists(dataset_path):
         raise FileNotFoundError(f"Dataset not found at {dataset_path}")
